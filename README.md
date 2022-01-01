@@ -2,6 +2,16 @@
 
 A helper program meant to automate the process of downloading mp3 files from YouTube using youtube-dl library
 
+## Dependencies
+
+In order to run _youtube_dl_helper_, you will need (apart from python, obviously):
+
+- selenium
+- youtube-dl
+- ffmpeg
+
+All of these dependencies can be acquired for free from the web, by using services like ```pip```, ```brew``` or ```choco```
+
 ## Usage:
 
 1. Create a text file containing desired track titles, one per line (// will denote the line as a comment, and it will be ignored!)
