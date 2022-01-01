@@ -32,10 +32,11 @@ def main():
             video_titles.append(title[:-1]) # Stores content of each line, minus \n character
                                             # Lines that contain a // are considered a comment, and are ignored
 
+    source_file.close() # Close source file; We won't be needing it anymore
+
     track_count = len(video_titles)
 
     print(">> " + str(track_count) + " track titles parsed from " + source_file_path)
-
 
     driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()))
     driver.maximize_window()
@@ -80,9 +81,6 @@ def main():
         current_track_number += 1
 
     print(">> Process Complete!")
-
-    source_file.close()
-
 
 if __name__ == "__main__":
     main()
