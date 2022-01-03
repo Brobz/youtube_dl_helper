@@ -1,0 +1,5 @@
+/-/ Ideas for future improvement \-\
+
+  /-/ TODO: \-\
+
+    >> 1. Add metadata (track title, artist and album title) to mp3 files after extraction from video
