@@ -2,4 +2,8 @@
 
   /-/ TODO: \-\
 
-    >> 1. Add metadata (track title, artist and album title) to mp3 files after extraction from video
+    >> 1. Update README
+    >> 2. Have it so that, upon finding there is no metadata for track title, search name gets auto filled into that spot
+    >> 3. Make output to console be a lot less spacey (instead of one line per item, one line per action and update line text for progress)
+    >> 4. Make it a lot more functional and less whatever this mess is
+    >> 5. Have it so that, upon finding YT link and realizing there is no metadata at all, try to scrape metadata from YT?

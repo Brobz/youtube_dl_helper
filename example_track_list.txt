@@ -1,11 +1,29 @@
-// Quick Track List Example!
+// Quick Example Track List
 
-TOOL - Lateralus
-Opeth - To Bid You Farewell
+// MP3 Track files will have their metadata encoded as follows:
 
-// Sorry, had to do it...
+  // YouTube Search Name / File Name || Artist || Album Title || Track Title
 
-Rick Astley - Never Gonna Give You Up
+// All metadata fields are optional, and will be left empty if not included
+// If you wish to include a later field (such as Track Name) but not the previous ones, you can write NULL for the blank fields:
+
+  // FileSlashSearchName || NULL || NULL || TrackTitle
+
+// And there is more:
+// If you encode the first track parameter (File / Search Name) as
+
+  // Artist - Track Title
+
+// With that neat '-' separator, these fields (Artist and Track Title) will be assumed for metadata info
+// This way, your encodings will only be lacking the Album Title, and will look something like this:
+
+  // Artist - Track Title || Album Title
+
+// Here are a few examples:
+
+TOOL - Lateralus || Lateralus
+Frank Sinatra - That's Life || Nothing But The Best
+Never Gonna Give You Up || Rick Astley || Whenever You Need Somebody || Never Gonna Give You Up
 
 // : )
 
