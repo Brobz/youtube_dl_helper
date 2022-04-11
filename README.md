@@ -23,4 +23,4 @@ All of these dependencies can be acquired for free from the web, by using servic
 
 ### Note
 
-An example track list text file (with all is syntactic flairs for metadata parsing) can be found on this very repository, under _example_track_list.txt_
+An example track list text file (with all it's syntactic flairs for metadata parsing) can be found on this very repository, under _example_track_list.txt_
