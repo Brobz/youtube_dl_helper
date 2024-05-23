@@ -1,4 +1,4 @@
-import os
+import os, time
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -7,6 +7,27 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.remote_connection import LOGGER, logging
+
+
+"""
+Changelog
+
+- 23/05/2024
+    Did need to refactor.
+    Now uses yt-dlp instead of youtube-dl.
+    Metada application is now flimsy since yt-dlp continues code execution before the file can finish downloading.
+    Need to figure out a fix.
+
+- 22/05/2024
+    So, apparently, according to results from brew install youtube-dl:
+
+        The current youtube-dl version has many unresolved issues.
+        Upstream have not tagged a new release since 2021.
+
+        Please use yt-dlp instead.
+
+    Might need to refactor this whole thing? Need to check.
+"""
 
 def main():
     YOUTUBE_URL = "http://www.youtube.com"
@@ -26,6 +47,11 @@ def main():
         except:
             print(">> Error opening '" + source_file_path + "'! Please try again!")
 
+    print(">> WARNING: Current version of yt-dlp does not wait for download to complete before returning a success signal to os.system()")
+    print(">> WARNING: Skipping metadata step is recommended until I figure a way to fix this")
+    print(">> WARNING: Apply metada (at risk of failure)? (Y/N)")
+
+    apply_metadata_flag = input("-- ")
 
     print(">> Parsing " + source_file_path + "...")
 
@@ -111,9 +137,12 @@ def main():
         print(">> Storing URI [" + str(current_track_number) + " of " + str(track_count) + "]...")
 
         driver.get(YOUTUBE_URL + "/results?search_query=" + title)
+
+        wait.until(visible((By.ID, "video-title")))
+
         assert "YouTube" in driver.title
         assert "No results found" not in driver.page_source
-        wait.until(visible((By.ID, "video-title")))
+        
         href = driver.find_element(By.ID, "video-title").get_attribute("href")
         video_links.append(href)
 
@@ -133,8 +162,24 @@ def main():
         current_track_number += 1
         print(">> Downloading track [" + str(current_track_number) + " of " + str(track_count) + "]...")
         try:
+            # replace any ( or ) in track title with [] to avoid bash errors
+            # also replacing any spaces with _, just for good measure
+            title = title.replace("(", "[")
+            title = title.replace(")", "]")
+            title = title.replace(" ", "_")
+
             # --rm-cache-dir flag prevents weird 403 HTTP errors from happening
-            res = os.system('youtube-dl -o "audio_files/' + title + '.%(ext)s" --rm-cache-dir --extract-audio --audio-format mp3 ' + link)
+            download_cmd = 'yt-dlp --rm-cache-dir -x --audio-format mp3 -o "audio_files/' + title + '.mp3" ' + link
+            
+            # First, write command into temp bash file so that os.system() actually waits for it to finish
+            temp_sh_filename = "temp_cmd.sh"
+            os.system("touch " + temp_sh_filename)
+            os.system("> " + temp_sh_filename)
+            os.system('echo "' + download_cmd + '" >> ' + temp_sh_filename)
+            os.system("chmod +x " + temp_sh_filename)
+
+            # Run the shell script
+            res = os.system("sh " + temp_sh_filename)
         except Exception as e:
             print(e)
             # // TODO: maybe do some sort of recovery here? (loop back and try again a couple of times? maybe loop back at the end of the tracklist?)
@@ -145,6 +190,11 @@ def main():
             # res == 1 means an error during download operation
             # // TODO: maybe do some sort of recovery here? (loop back and try again a couple of times? maybe loop back at the end of the tracklist?)
             print(">> ERROR downloading track [" + str(current_track_number) + " of " + str(track_count) + "] !!! Skipping to next track...")
+            continue
+        
+
+        if (apply_metadata_flag not in ["Y, Ye, Yes, y, ye, yes"]):
+            print(">> Skipping metadata application...")
             continue
 
         # res == 0 means a successfull download operation
@@ -174,7 +224,13 @@ def main():
 
         res = os.system(metadata_command)
 
+    # All done!
+    # Clean up temp shell script
+    os.system("rm " + temp_sh_filename)
+
     print(">> Process Complete!")
+    print(">> WARNING: Well, kind of. Downloads might still be going on in the background.")
+    print(">> WARNING: Please make sure files are completely downloaded before closing this window.")
 
 if __name__ == "__main__":
     main()

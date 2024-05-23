@@ -2,6 +2,8 @@
 
   /-/ TODO: \-\
   
+    >> 0. FIX os.system() CONTINUING CODE EXECUTION BEFORE yt-dlp FINISHES DOWNLOADING (this messes up with the metadata application step)
+    ------------------------------------------------------------------------------------------------------------------------------------------------
     >> 1. Have it so that, upon finding there is no metadata for track title, search name gets auto filled into that spot
     >> 2. Make output to console be a lot less spacey (instead of one line per item, one line per action and update line text for progress)
     >> 3. Make it a lot more functional and less whatever this mess is
